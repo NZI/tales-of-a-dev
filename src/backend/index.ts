@@ -2,8 +2,15 @@ import 'reflect-metadata'
 import { buildSchema } from 'type-graphql'
 import express from 'express'
 import {graphqlHTTP} from 'express-graphql'
-import {UserResolver} from "~/backend/resolvers/User";
-import path from "path";
+import {UserResolver} from "~/backend/resolvers/User"
+import {resolve} from "path"
+import { exists, fstat, stat } from 'fs'
+import { promisify } from 'util'
+import getDb from './database'
+import { User } from '~/lib/entities/User'
+import { getRepository } from 'typeorm'
+
+const asyncStat = promisify(stat)
 
 export default (async () => {
     const schema: any = await buildSchema({
@@ -14,17 +21,40 @@ export default (async () => {
 
     const app = express()
 
+    const connection = await getDb()
+
+    // let user = new User()
+    // user.firstName = 'Isaac'
+    // user.lastName = 'Gilmour'
+    // user.age = 25
+
+    // user = await connection.manager.save(user)
+    // console.log(user)
+
+    // const userRepository = getRepository(User)
+    // const user = await userRepository.find({firstName: 'Isaac'})
+    // console.log(user)
+
     app.use('/graphql', graphqlHTTP({
         schema,
         graphiql: true
     }))
 
-    app.get('*.js', (request, response, next) => {
-        response.sendFile(path.resolve(process.cwd(), `./frontend/${request.path}`))
-    })
-
-    app.get('*', (request,response, next) => {
-        response.sendFile(path.resolve(process.cwd(), './static/index.html'))
+    app.get('*', async (request,response, next) => {
+        const path = resolve(process.cwd(), `./frontend/${request.path}`)
+        let sendFile = false
+        try {
+            const stats = await asyncStat(path)
+            if (stats.isFile()) {
+                sendFile = true
+            }
+        } finally {
+            if (sendFile) {
+                response.sendFile(path)
+            } else {
+                response.sendFile(resolve(process.cwd(), './frontend/index.html'))
+            }
+        }
     })
 
     app.listen(4000)

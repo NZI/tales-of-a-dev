@@ -1,5 +1,6 @@
-import {Arg, Query, Resolver} from "type-graphql";
-import {User} from "~/lib/User";
+import "reflect-metadata"
+import {Arg, Query, Resolver} from "type-graphql"
+import {User} from "~/lib/entities/User"
 
 @Resolver(of => User)
 export class UserResolver {

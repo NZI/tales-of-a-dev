@@ -1,8 +1,8 @@
-const path = require('path');
-const CopyPlugin = require('copy-webpack-plugin');
+const path = require('path')
+const CopyPlugin = require('copy-webpack-plugin')
+const Dotenv = require('dotenv-webpack')
 
 const config = {
-    devtool: 'inline-source-map',
     mode: 'development',
     externals: {
         sqlite3: 'commonjs sqlite3',
@@ -33,24 +33,31 @@ const frontendConfig = Object.assign({}, config, {
     target: 'es5',
     entry: {
         frontend: './src/frontend/index.ts',
-    }
-})
-
-const backendConfig = Object.assign({}, config, {
-    target: 'node',
-    entry: {
-        backend: './src/backend/index.ts',
     },
     plugins: [
+        new Dotenv(),
         new CopyPlugin({
             patterns: [
                 {
                     from: path.resolve(__dirname, 'src', 'static'),
-                    to: path.resolve(__dirname, 'dist', 'static')
+                    to: path.resolve(__dirname, 'dist', 'frontend')
                 },
             ],
         }),
     ]
 })
 
-module.exports = [frontendConfig, backendConfig]
+const backendConfig = Object.assign({}, config, {
+    target: 'async-node',
+    entry: {
+        backend: './src/backend/index.ts',
+    },
+    plugins: [
+        new Dotenv(),
+    ]
+})
+
+module.exports = [
+    frontendConfig,
+    backendConfig
+]
