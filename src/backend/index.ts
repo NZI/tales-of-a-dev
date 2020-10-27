@@ -40,6 +40,29 @@ export default (async () => {
         graphiql: true
     }))
 
+
+    // app.get('/users', async (request,response, next) => {
+    //     const userRepository = getRepository(User)
+
+    //     const user = await userRepository.find({firstName: request.params.firstName})
+
+    //     response.json(user)
+    // })
+
+
+    // app.post('/users', async (request,response, next) => {
+    //     const userRepository = getRepository(User)
+
+    //     let user = new User()
+    //     user.firstName = request.params.firstName
+    //     user.lastName = 'Gilmour'
+    //     user.age = 25
+
+    //     user = await connection.manager.save(user)
+
+    //     response.json(user)
+    // })
+
     app.get('*', async (request,response, next) => {
         const path = resolve(process.cwd(), `./frontend/${request.path}`)
         let sendFile = false
