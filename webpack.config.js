@@ -1,4 +1,5 @@
 const path = require('path');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const config = {
     devtool: 'inline-source-map',
@@ -7,15 +8,13 @@ const config = {
         sqlite3: 'commonjs sqlite3',
         typeorm: 'commonjs typeorm'
     },
-    plugins: [
-    ],
     module: {
         rules: [
             {
                 test: /\.tsx?$/,
                 use: 'ts-loader',
                 exclude: /node_modules/,
-            }
+            },
         ]
     },
     resolve: {
@@ -26,7 +25,7 @@ const config = {
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: '[name].js'
+        filename: '[name]/bundle.js'
     }
 }
 
@@ -41,7 +40,17 @@ const backendConfig = Object.assign({}, config, {
     target: 'node',
     entry: {
         backend: './src/backend/index.ts',
-    }
+    },
+    plugins: [
+        new CopyPlugin({
+            patterns: [
+                {
+                    from: path.resolve(__dirname, 'src', 'static'),
+                    to: path.resolve(__dirname, 'dist', 'static')
+                },
+            ],
+        }),
+    ]
 })
 
 module.exports = [frontendConfig, backendConfig]
