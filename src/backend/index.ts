@@ -18,8 +18,6 @@ const asyncReadFile = promisify(readFile)
 export default (async () => {
     const app = express()
 
-    const connection = await getDb()
-
     // let user = new User()
     // user.firstName = 'Isaac'
     // user.lastName = 'Gilmour'
@@ -88,10 +86,6 @@ export default (async () => {
             })
         })
     });
-    // app.use('/graphql', graphqlHTTP({
-    //     schema,
-    //     graphiql: true
-    // }))
 
 
     // app.get('/users', async (request,response, next) => {

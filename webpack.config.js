@@ -35,7 +35,7 @@ const config = {
 const frontendConfig = Object.assign({}, config, {
     target: 'es5',
     entry: {
-        frontend: './src/frontend/index.ts',
+        frontend: './src/frontend/index.tsx',
     },
     plugins: [
         new Dotenv(),

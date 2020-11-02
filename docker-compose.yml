@@ -34,9 +34,6 @@ services:
             - .:/app
         working_dir: /app
         command: npm run build
-        depends_on:
-            db:
-                condition: service_healthy
     cote:
         image: node:latest
         volumes: 
