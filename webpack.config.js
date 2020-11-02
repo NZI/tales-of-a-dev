@@ -39,14 +39,6 @@ const frontendConfig = Object.assign({}, config, {
     },
     plugins: [
         new Dotenv(),
-        new CopyPlugin({
-            patterns: [
-                {
-                    from: resolve(__dirname, 'src', 'static'),
-                    to: resolve(__dirname, 'dist', 'frontend')
-                },
-            ],
-        }),
     ]
 })
 
@@ -56,7 +48,15 @@ const backendConfig = Object.assign({}, config, {
         backend: './src/backend/index.ts',
     },
     plugins: [
-        new Dotenv()
+        new Dotenv(),
+        new CopyPlugin({
+            patterns: [
+                {
+                    from: resolve(__dirname, 'src', 'static'),
+                    to: resolve(__dirname, 'dist', 'static')
+                },
+            ],
+        }),
     ]
 })
 
@@ -88,6 +88,9 @@ const servicesConfig = services.map(path => {
         }
 
         return Object.assign({}, baseServicesConfig, {
+            plugins: [
+                new Dotenv(),
+            ],
             entry: {
                 [service]: `${path}/index.ts`,
             },
@@ -95,8 +98,6 @@ const servicesConfig = services.map(path => {
         })
     }
 })
-
-console.log(servicesConfig)
 
 module.exports = [
     frontendConfig,

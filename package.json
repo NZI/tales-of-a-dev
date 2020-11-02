@@ -4,12 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently 'webpack --watch --progress' 'node bin/compile-cote.js' 'mkdir -p dist/backend && touch dist/backend/bundle.js && cd dist/backend && nodemon --watch bundle.js --watch services.json bundle.js'",
+    "build": "concurrently 'webpack --watch' 'node bin/update-express-microservices.js'",
+    "service": "mkdir -p dist/$SERVICE && touch dist/$SERVICE/bundle.js && cd dist/$SERVICE && nodemon --watch bundle.js bundle.js ",
+    "backend": "mkdir -p dist/backend && touch dist/backend/bundle.js && cd dist/backend && nodemon --watch bundle.js --watch services.json bundle.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/cote": "^0.19.0",
     "@types/node": "^14.14.5",
     "concurrently": "^5.3.0",
     "copy-webpack-plugin": "^6.2.1",

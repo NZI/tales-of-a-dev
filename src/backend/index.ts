@@ -2,24 +2,20 @@ import 'reflect-metadata'
 import { buildSchema } from 'type-graphql'
 import express, { RequestHandler, response } from 'express'
 import {graphqlHTTP} from 'express-graphql'
-import {UserResolver} from "~/backend/resolvers/User"
 import {resolve} from "path"
 import { exists, fstat, stat, readFile } from 'fs'
 import { promisify } from 'util'
 import getDb from './database'
 import { User } from '~/lib/entities/User'
 import { getRepository } from 'typeorm'
+import { coerceInputValue } from 'graphql'
+import cote from 'cote'
+import GraphQLRoute from './graphql'
 
 const asyncStat = promisify(stat)
 const asyncReadFile = promisify(readFile)
 
 export default (async () => {
-    const schema: any = await buildSchema({
-        resolvers: [UserResolver],
-        emitSchemaFile: false,
-        validate: true,
-    })
-
     const app = express()
 
     const connection = await getDb()
@@ -44,6 +40,10 @@ export default (async () => {
         return leftPriority == rightPriority ? left.localeCompare(right) : rightPriority - leftPriority
     })
 
+    const graphQLRoute = await GraphQLRoute()
+
+    app.use('/graphql', graphQLRoute)
+
     const hackyApp: any = (app as any)
     servicesOrder.forEach(service => {
         const methods = Object.keys(services[service])
@@ -55,20 +55,39 @@ export default (async () => {
             if (!(services[service][method] instanceof Array)) {
                 paths = [paths]
             }
-            const handler: RequestHandler = function (request, response, next) {
-                
-                next()
+            let requester: cote.Requester = null
+            const handler: RequestHandler = async (request, response, next) => {
+                console.log('sending request to ', {name: `${service}.requester`, key: service})
+                if (requester == null) {
+                    requester = new cote.Requester({name: `${service}.requester`, key: service})
+                }
+                const req = {
+                    type: `${request.method}`,
+                    query: request.query,
+                    params: request.params,
+                    cookies: request.cookies,
+                    body: request.body,
+                }
+
+                console.log(req)
+
+                const res = await requester.send(req)
+
+                if ('headers' in res) {
+                    for (let header in res.headers) {
+                        if (!res.headers.hasOwnProperty(header)) continue
+                        response.header(header, res.headers[header])
+                    }
+
+                }
+
+                response.send(res.body)
             };
             paths.forEach((path: string) => {
                 hackyApp[method](path, handler)
             })
         })
     });
-
-    app.use((request, response, next) => {
-
-    })
-
     // app.use('/graphql', graphqlHTTP({
     //     schema,
     //     graphiql: true
@@ -98,19 +117,19 @@ export default (async () => {
     // })
 
     app.get('*', async (request,response, next) => {
-        const path = resolve(process.cwd(), `./frontend/${request.path}`)
+        const path = resolve(process.cwd(), `../frontend/${request.path}`)
         let sendFile = false
         try {
             const stats = await asyncStat(path)
             if (stats.isFile()) {
                 sendFile = true
             }
-        } finally {
-            if (sendFile) {
-                response.sendFile(path)
-            } else {
-                response.sendFile(resolve(process.cwd(), './frontend/index.html'))
-            }
+        } catch(e) { }
+
+        if (sendFile) {
+            response.sendFile(path)
+        } else {
+            response.sendFile(resolve(process.cwd(), '../static/index.html'))
         }
     })
 

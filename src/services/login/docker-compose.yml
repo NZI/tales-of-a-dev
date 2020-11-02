@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+    login:
+        image: node:latest
+        working_dir: /app
+        volumes: 
+            - .:/app
+        environment: 
+            SERVICE: login
+        command: npm run service
+        depends_on:
+            db:
+                condition: service_healthy

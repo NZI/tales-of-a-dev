@@ -1,0 +1,54 @@
+version: "3.8"
+services:
+    db:
+        image: mysql:latest
+        volumes: 
+            - ./cache/mysql:/var/lib/mysql
+        environment:
+            MYSQL_DATABASE: typeorm-example
+            MYSQL_USER: typeorm
+            MYSQL_PASSWORD: UYGI*YUh9687*^RT&%^RgytivbiguhibuhTF^f8gt68gt8g
+            MYSQL_ROOT_PASSWORD: thg4uoijtbhgo4iuthgbo4wiurtghb43i5ub3845btyk
+        healthcheck:
+            test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+            timeout: 3s
+            retries: 20
+        command: mysqld --default-authentication-plugin=mysql_native_password
+    adminer:
+        image: adminer
+        ports:
+            - 4002:8080
+        depends_on:
+            db:
+                condition: service_healthy
+    build:
+        image: node:latest
+        volumes: 
+            - .:/app
+        working_dir: /app
+        command: npm run build
+        depends_on:
+            db:
+                condition: service_healthy
+    cote:
+        image: node:latest
+        volumes: 
+            - .:/app
+        ports:
+            - "4001:4001"
+        working_dir: /app
+        command: node bin/cote-monitoring.js
+        depends_on:
+            db:
+                condition: service_healthy
+    backend:
+        image: node:latest
+        ports:
+            - "8080:4000"
+        volumes: 
+            - .:/app
+        working_dir: /app
+        command: npm run backend
+        depends_on:
+            db:
+                condition: service_healthy
