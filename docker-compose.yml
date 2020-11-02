@@ -21,6 +21,13 @@ services:
         depends_on:
             db:
                 condition: service_healthy
+    install:
+        image: node:latest
+        volumes: 
+            - .:/app
+        working_dir: /app
+        command: npm install
+        scale: 0
     build:
         image: node:latest
         volumes: 
