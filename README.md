@@ -1,6 +1,7 @@
 # Install
 
 ```bash
+cp .env{.sample,}
 ./bin/docker-compose.sh run --rm install
 ```
 
