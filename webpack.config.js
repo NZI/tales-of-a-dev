@@ -14,6 +14,17 @@ const config = {
     module: {
         rules: [
             {
+                test: /\.s[ac]ss$/i,
+                use: [
+                    'style-loader',
+                    // Translates CSS into CommonJS
+                    'css-loader?modules&importLoaders=1',
+                    // Compiles Sass to CSS
+                    'sass-loader',
+                ],
+                exclude: /node_modules/,
+            },
+            {
                 test: /\.tsx?$/,
                 use: 'ts-loader',
                 exclude: /node_modules/,
@@ -80,23 +91,22 @@ const servicesConfig = services.map(path => {
         if (stats.isFile()) {
             hasConfig = true
         }
-    } finally {
-        let extraConfig = {}
+    } catch(e) { }
+    let extraConfig = {}
 
-        if (hasConfig) {
-            extraConfig = require(`${path}/webpack.config.js`)
-        }
-
-        return Object.assign({}, baseServicesConfig, {
-            plugins: [
-                new Dotenv(),
-            ],
-            entry: {
-                [service]: `${path}/index.ts`,
-            },
-            ...extraConfig
-        })
+    if (hasConfig) {
+        extraConfig = require(`${path}/webpack.config.js`)
     }
+
+    return Object.assign({}, baseServicesConfig, {
+        plugins: [
+            new Dotenv(),
+        ],
+        entry: {
+            [service]: `${path}/index.ts`,
+        },
+        ...extraConfig
+    })
 })
 
 module.exports = [

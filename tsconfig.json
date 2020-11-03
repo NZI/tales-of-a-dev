@@ -15,5 +15,8 @@
       "~*": ["./src/*"]
     },
     "allowSyntheticDefaultImports": true
-  }
+  },
+  "includes": [
+    "./externals.d.ts"
+  ]
 }
