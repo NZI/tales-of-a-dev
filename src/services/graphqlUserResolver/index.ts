@@ -4,7 +4,7 @@ import { User } from '~/lib/entities/User'
 const responder = new cote.Responder({name: 'responder.graphqlUserResolver', key: 'graphqlUserResolver'})
 
 responder.on('graphqlUserResolver.users', async (data: any) => {
-    
+    console.log(data)
     const foobar = new User()
     foobar.id = '2'
     foobar.firstName = 'foo'

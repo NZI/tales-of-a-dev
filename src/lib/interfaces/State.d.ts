@@ -1,5 +1,6 @@
 export default interface State {
     counter: {
-        value: number
+        value: number,
+        serverValue: any
     }
 }

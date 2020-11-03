@@ -1,5 +1,6 @@
 export default {
     counter: {
-        value: 0
+        value: 0,
+        serverValue: {}
     }
 }

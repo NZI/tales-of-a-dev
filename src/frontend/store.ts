@@ -1,14 +1,20 @@
 
 import {createStore, applyMiddleware} from 'redux'
 import rootReducer from "./reducers"
-import {composeWithDevTools} from "redux-devtools-extension";
+import {composeWithDevTools} from "redux-devtools-extension"
+import createSagaMiddleware from 'redux-saga'
+import {debounceCounterToServer} from "~/frontend/sagas/helloWorld";
 
+const sagaMiddleware = createSagaMiddleware()
 
 const composedEnhancer = composeWithDevTools(
     // Add whatever middleware you actually want to use here
-    applyMiddleware()
+    applyMiddleware(sagaMiddleware)
     // other store enhancers if any
 )
 
-export default createStore(rootReducer, composedEnhancer)
+const store = createStore(rootReducer, composedEnhancer)
 
+sagaMiddleware.run(debounceCounterToServer)
+
+export default store

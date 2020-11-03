@@ -1,14 +1,9 @@
 import 'reflect-metadata'
-import { buildSchema } from 'type-graphql'
-import express, { RequestHandler, response } from 'express'
-import {graphqlHTTP} from 'express-graphql'
+import bodyParser from "body-parser"
+import express, {RequestHandler} from 'express'
 import {resolve} from "path"
-import { exists, fstat, stat, readFile } from 'fs'
-import { promisify } from 'util'
-import getDb from './database'
-import { User } from '~/lib/entities/User'
-import { getRepository } from 'typeorm'
-import { coerceInputValue } from 'graphql'
+import { stat, readFile} from 'fs'
+import {promisify} from 'util'
 import cote from 'cote'
 import GraphQLRoute from './graphql'
 
@@ -31,7 +26,7 @@ export default (async () => {
     // console.log(user)
 
     const services = JSON.parse(await asyncReadFile(resolve(process.cwd(), 'services.json'), {encoding: 'utf-8'}))
- 
+
     const servicesOrder = Object.keys(services).sort((left, right) => {
         const leftPriority = 'priority' in services[left] ? services[left].priority : 0
         const rightPriority = 'priority' in services[right] ? services[right].priority : 0
@@ -39,6 +34,9 @@ export default (async () => {
     })
 
     const graphQLRoute = await GraphQLRoute()
+
+    app.use(bodyParser.json({type: 'application/json'}));
+    app.use(bodyParser.urlencoded({ extended: true, type: 'application/x-www-form-urlencoded' }));
 
     app.use('/graphql', graphQLRoute)
 
@@ -55,10 +53,10 @@ export default (async () => {
             }
             let requester: cote.Requester = null
             const handler: RequestHandler = async (request, response, next) => {
-                console.log('sending request to ', {name: `${service}.requester`, key: service})
                 if (requester == null) {
                     requester = new cote.Requester({name: `${service}.requester`, key: service})
                 }
+
                 const req = {
                     type: `${request.method}`,
                     query: request.query,
@@ -66,7 +64,6 @@ export default (async () => {
                     cookies: request.cookies,
                     body: request.body,
                 }
-
                 console.log(req)
 
                 const res = await requester.send(req)
@@ -110,7 +107,7 @@ export default (async () => {
     //     response.json(user)
     // })
 
-    app.get('*', async (request,response, next) => {
+    app.get('*', async (request, response, next) => {
         const path = resolve(process.cwd(), `../frontend/${request.path}`)
         let sendFile = false
         try {
@@ -118,7 +115,8 @@ export default (async () => {
             if (stats.isFile()) {
                 sendFile = true
             }
-        } catch(e) { }
+        } catch (e) {
+        }
 
         if (sendFile) {
             response.sendFile(path)
