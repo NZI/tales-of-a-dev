@@ -8,10 +8,6 @@ const selectCounter = (state: State) => state.counter
 const App = (props: any) => {
     const dispatch = useDispatch()
     const counter = useSelector(selectCounter)
-    console.log({
-        where: 'react',
-        counter
-    })
 
     return (
         <section className={styles.app}>
