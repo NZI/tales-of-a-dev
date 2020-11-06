@@ -1,7 +1,7 @@
 import {debounce, select, put} from 'redux-saga/effects'
-import State from "~/lib/interfaces/State"
+import {State} from "~/lib/interfaces/State"
 import Action from "~/lib/interfaces/Action";
-
+import {COUNTER_SAVED} from "~/frontend/reducers/counterReducer";
 
 export const getCounterValue = (state: State) => {
     console.log(state.counter)
@@ -20,7 +20,7 @@ export function* sendCounterToServer() {
     })
     const serverCounter = yield response.json()
     yield put({
-        type: 'FETCH/COUNTER_SAVED',
+        type: COUNTER_SAVED,
         value: serverCounter
     })
 }

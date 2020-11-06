@@ -108,18 +108,29 @@ export default (async () => {
     // })
 
     app.get('*', async (request, response, next) => {
-        const path = resolve(process.cwd(), `../frontend/${request.path}`)
-        let sendFile = false
+        const frontendPath = resolve(process.cwd(), `../frontend/${request.path}`)
+        const staticPath = resolve(process.cwd(), `../static/${request.path}`)
+        let sendFile = null
         try {
-            const stats = await asyncStat(path)
+            const stats = await asyncStat(frontendPath)
             if (stats.isFile()) {
-                sendFile = true
+                sendFile = frontendPath
             }
         } catch (e) {
         }
 
+        if (!sendFile) {
+            try {
+                const stats = await asyncStat(staticPath)
+                if (stats.isFile()) {
+                    sendFile = staticPath
+                }
+            } catch (e) {
+            }
+        }
+
         if (sendFile) {
-            response.sendFile(path)
+            response.sendFile(sendFile)
         } else {
             response.sendFile(resolve(process.cwd(), '../static/index.html'))
         }

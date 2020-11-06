@@ -23,7 +23,7 @@ export class UserResolver {
         }
 
         const users = await requester.send({
-            type: 'graphqlUserResolver.users',
+            type: 'users',
             firstName,
             lastName
         })

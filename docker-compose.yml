@@ -42,9 +42,6 @@ services:
             - "4001:4001"
         working_dir: /app
         command: node bin/cote-monitoring.js
-        depends_on:
-            db:
-                condition: service_healthy
     backend:
         image: node:latest
         ports:
@@ -53,6 +50,3 @@ services:
             - .:/app
         working_dir: /app
         command: npm run backend
-        depends_on:
-            db:
-                condition: service_healthy

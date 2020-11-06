@@ -1,8 +1,84 @@
+@import url(https://fonts.googleapis.com/css?family=Maven+Pro&display=swap);
+@import url(https://fonts.googleapis.com/icon?family=Material+Icons);
+
 :local {
   .app {
+    background-image: url(/bliss.jpg);
+    position: absolute;
+    background-size: cover;
+    background-position: 50% 50%;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    font-family: "Maven Pro", sans-serif;
+    transition: all 0.3s ease-out;
+
+    .menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3vh;
+      text-align: right;
+      padding: 1vh;
+    }
+
+    .account {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      top: 40vh;
+      bottom: 40vh;
+      left: 40vw;
+      right: 40vw;
+      padding: 1vh;
+      border-radius: 2px;
+      opacity: 0;
+      transform: scale(0.9);
+      background-color: #6c0000;
+      transition: all 0.1s ease-out;
+
+
+      input {
+        color: white;
+        font-size: 1vw;
+        background-color: transparent;
+        padding: 0.2vw;
+        margin: 0.2vw;
+        border: none;
+        text-align: center;
+
+        &::placeholder {
+          color: #b0b0b0;
+        }
+      }
+
+      &.show {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
     h1 {
-      color: red;
+      margin: 0;
+      color: #dfe9f3;
+      font-size: 42px;
+      bottom: 3vw;
+      right: 3vw;
+      position: absolute;
+      transition: all 0.3s 0.6s ease-out;
+    }
+
+    &.loading {
+      opacity: 0;
+      transform: scale(0.9);
+
+      h1 {
+        opacity: 0;
+      }
     }
   }
 }
+
 

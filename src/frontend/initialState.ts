@@ -1,4 +1,4 @@
-import State from "~/lib/interfaces/State"
+import {State} from "~/lib/interfaces/State"
 import LoadState from "~/lib/interfaces/LoadState"
 
 const initialState: State = {
@@ -8,6 +8,12 @@ const initialState: State = {
     },
     user: {
         loadState: LoadState.NOT_LOADED,
+    },
+    page: {
+        loadState: LoadState.NOT_LOADED,
+    },
+    app: {
+        showLogin: false,
     }
 }
 

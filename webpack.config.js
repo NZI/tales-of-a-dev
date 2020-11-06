@@ -18,7 +18,7 @@ const config = {
                 use: [
                     'style-loader',
                     // Translates CSS into CommonJS
-                    'css-loader?modules&importLoaders=1',
+                    'css-loader?modules&importLoaders=1&url=false',
                     // Compiles Sass to CSS
                     'sass-loader',
                 ],
